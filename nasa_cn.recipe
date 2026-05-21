@@ -1,0 +1,29 @@
+import os
+import time
+import re
+import datetime
+
+os.environ['TZ'] = 'Asia/Shanghai'
+time.tzset()
+
+class AdvancedUserRecipeNasaCn(BasicNewsRecipe):
+    title = datetime.datetime.now().strftime('NASA中文宇宙 - %Y-%m-%d')
+    language = 'zh_CN'
+    oldest_article = 1
+    max_articles_per_feed = 15
+
+    no_summaries = True
+    use_embedded_content = True
+
+    remove_tags = [
+        dict(name='hr'),
+        dict(name='script'),
+        dict(name='style'),
+    ]
+
+    def preprocess_html(self, soup):
+        return soup
+
+    feeds = [
+        ("NASA中文", "https://www.nasachina.cn/feed"),
+    ]
