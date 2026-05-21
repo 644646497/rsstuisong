@@ -1,46 +1,34 @@
-name: Send BBC to Kindle
+name: Send BBC News to Kindle
+
 on:
-  schedule:
-    - cron: '0 12 * * *'
   workflow_dispatch:
+  schedule:
+    - cron: '0 6 * * *'
 
 jobs:
-  send:
+  build-and-send:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Install Calibre
-        run: sudo apt-get update && sudo apt-get install -y calibre
-      - name: Send to Kindle
-        env:
-          FROM: ${{ secrets.FROM }}
-          TO: ${{ secrets.TO }}
-          SMTP: ${{ secrets.SMTP }}
-          PORT: ${{ secrets.PORT }}
-          SECRET: ${{ secrets.SECRET }}
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y calibre
+
+      - name: Build BBC EPUB
         run: |
           ebook-convert bbc.recipe bbc.epub --output-profile kindle
-          python3 -c '
-import smtplib, os
-from email.mime.multipart import MIMEMultipart
-from email.mime.base import MIMEBase
-from email import encoders
-from datetime import datetime
 
-msg = MIMEMultipart()
-msg["From"] = os.environ["FROM"]
-msg["To"] = os.environ["TO"]
-msg["Subject"] = "BBC中文 " + datetime.now().strftime("%Y-%m-%d")
-
-with open("bbc.epub", "rb") as f:
-    part = MIMEBase("application", "epub+zip")
-    part.set_payload(f.read())
-    encoders.encode_base64(part)
-    part.add_header("Content-Disposition", "attachment", filename="bbc.epub")
-    msg.attach(part)
-
-with smtplib.SMTP_SSL(os.environ["SMTP"], int(os.environ["PORT"])) as server:
-    server.login(os.environ["FROM"], os.environ["SECRET"])
-    server.send_message(msg)
-print("发送完成")
-'
+      - name: Send EPUB to Kindle via Email
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: ${{ secrets.SMTP }}
+          server_port: ${{ secrets.PORT }}
+          username: ${{ secrets.FROM }}
+          password: ${{ secrets.SECRET }}
+          subject: "BBC News - ${{ github.sha }}"
+          to: ${{ secrets.TO }}
+          from: ${{ secrets.FROM }}
+          attachments: bbc.epub
