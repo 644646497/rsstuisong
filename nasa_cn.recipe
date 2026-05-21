@@ -21,9 +21,6 @@ class AdvancedUserRecipeNasaCn(BasicNewsRecipe):
         dict(name='style'),
     ]
 
-    def preprocess_html(self, soup):
-        return soup
-
     feeds = [
-        ("NASA中文", "https://www.nasachina.cn/feed"),
+        ("NASA中文", "https://feedx.net/rss/nasachina.xml"),
     ]
