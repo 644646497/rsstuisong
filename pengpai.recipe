@@ -1,9 +1,6 @@
-from KindleEar.sources import BasicRSS
-
-class Recipe(BasicRSS):
-    title = "澎湃新闻"
-    feeds = [
-        ("澎湃要闻", "https://feedx.net/rss/thepaper.xml"),
-    ]
-    description = "澎湃新闻全文资讯"
-    language = "zh-CN"
+title = "澎湃新闻"
+description = "澎湃新闻全文资讯"
+language = "zh-CN"
+feeds = [
+    ("澎湃要闻", "https://feedx.net/rss/thepaper.xml"),
+]
