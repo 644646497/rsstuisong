@@ -1,0 +1,9 @@
+from KindleEar.sources import BasicRSS
+
+class Recipe(BasicRSS):
+    title = "澎湃新闻"
+    feeds = [
+        ("澎湃新闻精选", "https://raw.githubusercontent.com/644646497/rsstuisong/main/pengpai/pengpai.xml"),
+    ]
+    description = "澎湃新闻实时资讯精选"
+    language = "zh-CN"
